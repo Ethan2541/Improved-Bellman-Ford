@@ -5,17 +5,21 @@ import numpy as np
 
 def compute_shortest_paths(graph: nx.DiGraph, source:int):
     shortest_paths = ShortestPaths(graph, source)
-    shortest_paths.update_all_vertices()
+    shortest_paths.update_all_nodes()
     distances = shortest_paths.distances
     predecessors = shortest_paths.predecessors
     n_iterations = shortest_paths.n_iterations
     return distances, predecessors, n_iterations
 
 
-# The GloutonFas algorithm aims to determine an order of the vertices for the Bellman-Ford algorithm
-# First, we choose all the sources (vertices with no predecessors=)
-# Then, we determine the targets (vertices with no successor)
-# If there is neither any source nor target, the next greatest vertex is the one whose the difference between the number of successors and predecessors is maximal
+
+"""
+The GloutonFas algorithm aims to determine an order of the nodes for the Bellman-Ford algorithm
+First, we choose all the sources (nodes with no predecessors=)
+Then, we determine the targets (nodes with no successor)
+If there is neither any source nor target, the next greatest node is the one whose the difference between the number of successors and predecessors is maximal
+"""
+
 def glouton_fas(graph: nx.DiGraph):
     s1 = []
     s2 = []
@@ -29,7 +33,7 @@ def glouton_fas(graph: nx.DiGraph):
         s2 += removed_targets
 
         if len(graph_copy.nodes) > 0:
-            v = find_vertex_with_maximal_gap_out_in_degrees(graph_copy)
+            v = find_node_with_maximal_gap_out_in_degrees(graph_copy)
             s1.append(v)
             graph_copy.remove_node(v)
 
@@ -56,11 +60,11 @@ def remove_targets(graph: nx.DiGraph):
     return graph, removed_targets
 
 
-def find_vertex_with_maximal_gap_out_in_degrees(graph: nx.DiGraph):
+def find_node_with_maximal_gap_out_in_degrees(graph: nx.DiGraph):
     max_gap = -np.inf
-    vertex_max = None
+    node_max = None
     for v in graph.nodes:
         if max_gap < graph.out_degree(v) - graph.in_degree(v):
             max_gap = graph.out_degree(v) - graph.in_degree(v)
-            vertex_max = v
-    return vertex_max
+            node_max = v
+    return node_max

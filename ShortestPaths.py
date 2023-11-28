@@ -17,15 +17,15 @@ class ShortestPaths:
                 self.distances[v] = np.inf
             self.predecessors[v] = None
 
-    def update_all_vertices(self):
-        vertices_to_update = [v for v in self.graph.nodes if v != self.source]        
-        for v in vertices_to_update:
+    def update_all_nodes(self):
+        nodes_to_update = [v for v in self.graph.nodes if v != self.source]        
+        for v in nodes_to_update:
             self.update(v)
             self.n_iterations += 1
 
     def update(self, v):
-        incoming_edges_of_vertex = self.graph.in_edges(v)
-        for predecessor, _ in incoming_edges_of_vertex:
+        incoming_edges_of_node = self.graph.in_edges(v)
+        for predecessor, _ in incoming_edges_of_node:
             dpredecessor = self.distances[predecessor]
             dv = self.distances[v]
             weight = self.graph[predecessor][v]['weight']
