@@ -5,11 +5,10 @@ import numpy as np
 
 def compute_shortest_paths(graph: nx.DiGraph, source:int):
     shortest_paths = ShortestPaths(graph, source)
-    shortest_paths.update_all_nodes()
-    distances = shortest_paths.distances
-    predecessors = shortest_paths.predecessors
+    shortest_paths.bellman_ford()
+    shortest_paths_graph = shortest_paths.create_shortest_paths_graph()
     n_iterations = shortest_paths.n_iterations
-    return distances, predecessors, n_iterations
+    return shortest_paths_graph, n_iterations
 
 
 
@@ -28,10 +27,11 @@ def glouton_fas(graph: nx.DiGraph):
     while len(graph_copy.nodes) > 0:
         graph_copy, removed_sources = remove_sources(graph_copy)
         s1 += removed_sources
+        print(removed_sources)
 
         graph_copy, removed_targets = remove_targets(graph_copy)
         s2 += removed_targets
-
+        print(removed_targets)
         if len(graph_copy.nodes) > 0:
             v = find_node_with_maximal_gap_out_in_degrees(graph_copy)
             s1.append(v)
