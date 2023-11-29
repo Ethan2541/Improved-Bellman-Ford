@@ -27,11 +27,9 @@ def glouton_fas(graph: nx.DiGraph):
     while len(graph_copy.nodes) > 0:
         graph_copy, removed_sources = remove_sources(graph_copy)
         s1 += removed_sources
-        print(removed_sources)
 
         graph_copy, removed_targets = remove_targets(graph_copy)
         s2 += removed_targets
-        print(removed_targets)
         if len(graph_copy.nodes) > 0:
             v = find_node_with_maximal_gap_out_in_degrees(graph_copy)
             s1.append(v)
@@ -41,22 +39,24 @@ def glouton_fas(graph: nx.DiGraph):
 
 
 def remove_sources(graph: nx.DiGraph):
-    sources = [x for x in graph.nodes() if graph.in_degree(x)==0]
+    sources = [x for x in graph.nodes() if graph.in_degree(x) == 0]
     removed_sources = []
     while len(sources) > 0:
-        removed_sources.append(sources[0])
-        graph.remove_node(sources[0])
-        sources = [x for x in graph.nodes() if graph.in_degree(x)==0]
+        removed_node = sources.pop(0)
+        removed_sources.append(removed_node)
+        graph.remove_node(removed_node)
+        sources += [s for s in graph.nodes() if (graph.in_degree(s) == 0) and (s not in sources)]
     return graph, removed_sources
 
 
 def remove_targets(graph: nx.DiGraph):
-    targets = [x for x in graph.nodes() if graph.out_degree(x)==0]
+    targets = [x for x in graph.nodes() if graph.out_degree(x) == 0]
     removed_targets = []
-    while targets: 
-        removed_targets.append(targets[0])
-        graph.remove_node(targets[0])
-        targets = [x for x in graph.nodes() if graph.out_degree(x)==0]
+    while len(targets) > 0:
+        removed_node = targets.pop(0)
+        removed_targets.append(removed_node)
+        graph.remove_node(removed_node)
+        targets += [t for t in graph.nodes() if (graph.out_degree(t) == 0) and (t not in targets)]
     return graph, removed_targets
 
 
