@@ -14,16 +14,19 @@ class ShortestPaths:
         self.distances[self.source] = 0
         self.predecessors = {node: None for node in self.graph.nodes}
 
-    def bellman_ford(self):
+    def bellman_ford(self, ordered_nodes=None):
         n_nodes = len(self.graph.nodes)
+        if ordered_nodes is None:
+            ordered_nodes = self.graph.nodes
         while (self.n_iterations < n_nodes - 1) and (not self.hasConverged):
             self.n_iterations += 1
             self.hasConverged = True
-            for predecessor, v in self.graph.edges:
-                if self.distances[predecessor] + self.graph[predecessor][v]['weight'] < self.distances[v]:   
-                    self.distances[v] = self.distances[predecessor] + self.graph[predecessor][v]['weight']
-                    self.predecessors[v] = predecessor
-                    self.hasConverged = False
+            for v in ordered_nodes:
+                for predecessor, _ in self.graph.in_edges(v):
+                    if self.distances[predecessor] + self.graph[predecessor][v]['weight'] < self.distances[v]:   
+                        self.distances[v] = self.distances[predecessor] + self.graph[predecessor][v]['weight']
+                        self.predecessors[v] = predecessor
+                        self.hasConverged = False
 
     def create_shortest_paths_graph(self):
         edges = [(self.predecessors[v], v) for v in range(len(self.predecessors)) if v != self.source]

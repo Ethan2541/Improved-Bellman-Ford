@@ -30,6 +30,7 @@ def glouton_fas(graph: nx.DiGraph):
 
         graph_copy, removed_targets = remove_targets(graph_copy)
         s2 += removed_targets
+        
         if len(graph_copy.nodes) > 0:
             v = find_node_with_maximal_gap_out_in_degrees(graph_copy)
             s1.append(v)
