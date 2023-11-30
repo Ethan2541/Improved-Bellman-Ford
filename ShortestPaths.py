@@ -1,5 +1,3 @@
-from utils import create_graph
-import networkx as nx
 import numpy as np
 
 class ShortestPaths:
@@ -33,8 +31,3 @@ class ShortestPaths:
             if self.distances[u] + self.graph[u][v]['weight'] < self.distances[v]:   
                 self.has_converged = False
                 raise ValueError('The input graph contains at least one negative cycle, preventing Bellman-Ford algorithm from converging.')
-
-    def create_graph_of_shortest_paths(self):
-        edges = [(self.predecessors[v], v) for v in range(len(self.predecessors)) if self.predecessors[v] != None]
-        shortest_paths_graph = create_graph(self.graph.nodes, edges)
-        return shortest_paths_graph
