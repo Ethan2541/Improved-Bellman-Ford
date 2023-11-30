@@ -96,3 +96,14 @@ def create_weighted_graph_from_template(template_graph, weight_min, weight_max):
         new_edges.append((u, v, {'weight': w}))
     weighted_graph = nx.DiGraph(new_edges)
     return weighted_graph
+
+
+
+def display_graph(graph):
+    pos = nx.spring_layout(graph)
+    try:
+        labels = {x[:2]: np.round(graph.get_edge_data(*x)['weight'], 2) for x in graph.edges}
+        nx.draw_networkx_edge_labels(graph, pos, labels)
+    except KeyError:
+        pass
+    nx.draw_networkx(graph, pos, with_labels=True, arrows=True)
