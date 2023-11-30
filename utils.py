@@ -83,20 +83,34 @@ def create_random_graph(n_nodes):
     edges = []
     for u in nodes:
         possible_neighbours = [v for v in nodes if v != u]
-        n_neighbours = np.random.randint(0, n_nodes)
-        neighbours = np.random.choice(possible_neighbours, n_neighbours, replace=False)
+        neighbours = choose_neighbours(possible_neighbours)
         edges += [(u,v) for v in neighbours]
-    created_graph = nx.DiGraph(edges)
+    created_graph = create_graph(nodes, edges)
     return created_graph
+
+
+def create_graph(nodes, edges):
+    created_graph = nx.DiGraph()
+    created_graph.add_nodes_from(nodes)
+    created_graph.add_edges_from(edges)
+    return created_graph
+
+
+def choose_neighbours(possible_neighbours, p_edge=0.1):
+    neighbours = []
+    for v in possible_neighbours:
+        p = np.random.rand()
+        if p < p_edge:
+            neighbours.append(v)
+    return neighbours
 
 
 def create_weighted_graph_from_template(template_graph, weight_min, weight_max):
     new_edges = []
     for (u,v), w in zip(template_graph.edges, np.random.randint(weight_min, weight_max+1, len(template_graph.edges))):
         new_edges.append((u, v, {'weight': w}))
-    weighted_graph = nx.DiGraph(new_edges)
+    weighted_graph = create_graph(template_graph.nodes, new_edges)
     return weighted_graph
-
 
 
 def display_graph(graph):
@@ -107,3 +121,18 @@ def display_graph(graph):
     except KeyError:
         pass
     nx.draw_networkx(graph, pos, with_labels=True, arrows=True)
+
+
+def graphs_union(graphs_list):
+    edges_of_graphs_union = []
+    for graph in graphs_list:
+        nodes = graph.nodes
+        edges_of_graphs_union = list(set(edges_of_graphs_union + list(graph.edges)))
+    graph_of_union = create_graph(nodes, edges_of_graphs_union)
+    return graph_of_union
+
+
+def pick_source_from_graph(graph):
+    n_neighbours_for_each_node = [degree for node, degree in graph.out_degree]
+    source = np.argmax(n_neighbours_for_each_node)
+    return source
