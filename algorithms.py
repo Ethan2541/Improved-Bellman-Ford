@@ -69,3 +69,22 @@ def find_node_with_maximal_gap_out_in_degrees(graph: nx.DiGraph):
             max_gap = graph.out_degree(v) - graph.in_degree(v)
             node_max = v
     return node_max
+
+
+def generate_graphs(n_graphs, n_nodes, weight_min, weight_max, p_edge=None):
+    nodes = np.arange(0, n_nodes-1)
+    edges = []
+    for u in nodes:
+        possible_neighbours = [v for v in nodes if v != u]
+        neighbours = np.random.Generator.choice(possible_neighbours, p=p_edge)
+        edges += [(u,v) for v in neighbours]
+    G = nx.DiGraph(edges)
+
+    test_graphs = []
+    for _ in range(n_graphs):
+        new_edges = []
+        for edge, w in zip(G.edges, np.random.uniform(weight_min, weight_max, len(G.edges))):
+            new_edges.append((edge[0], edge[1], {'weight': w}))
+        test_graphs.append(nx.DiGraph(new_edges))
+
+    return G, test_graphs
