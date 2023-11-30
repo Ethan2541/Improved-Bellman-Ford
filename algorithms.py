@@ -6,7 +6,7 @@ import numpy as np
 def compute_shortest_paths(graph: nx.DiGraph, source:int):
     shortest_paths = ShortestPaths(graph, source)
     shortest_paths.bellman_ford()
-    shortest_paths_graph = shortest_paths.create_shortest_paths_graph()
+    shortest_paths_graph = shortest_paths.create_graph_of_shortest_paths()
     n_iterations = shortest_paths.n_iterations
     return shortest_paths_graph, n_iterations
 
@@ -71,20 +71,28 @@ def find_node_with_maximal_gap_out_in_degrees(graph: nx.DiGraph):
     return node_max
 
 
-def generate_graphs(n_graphs, n_nodes, weight_min, weight_max, p_edge=None):
-    nodes = np.arange(0, n_nodes-1)
+
+def generate_random_test_sets(n_instances, n_nodes, weight_min, weight_max):
+    G = create_random_graph(n_nodes)
+    weighted_graphs = [create_weighted_graph_from_template(G, weight_min, weight_max) for _ in range(n_instances)]
+    return G, weighted_graphs
+
+
+def create_random_graph(n_nodes):
+    nodes = range(0, n_nodes)
     edges = []
     for u in nodes:
         possible_neighbours = [v for v in nodes if v != u]
-        neighbours = np.random.Generator.choice(possible_neighbours, p=p_edge)
+        n_neighbours = np.random.randint(0, n_nodes)
+        neighbours = np.random.choice(possible_neighbours, n_neighbours, replace=False)
         edges += [(u,v) for v in neighbours]
-    G = nx.DiGraph(edges)
+    created_graph = nx.DiGraph(edges)
+    return created_graph
 
-    test_graphs = []
-    for _ in range(n_graphs):
-        new_edges = []
-        for edge, w in zip(G.edges, np.random.uniform(weight_min, weight_max, len(G.edges))):
-            new_edges.append((edge[0], edge[1], {'weight': w}))
-        test_graphs.append(nx.DiGraph(new_edges))
 
-    return G, test_graphs
+def create_weighted_graph_from_template(template_graph, weight_min, weight_max):
+    new_edges = []
+    for (u,v), w in zip(template_graph.edges, np.random.uniform(weight_min, weight_max, len(template_graph.edges))):
+        new_edges.append((u, v, {'weight': w}))
+    weighted_graph = nx.DiGraph(new_edges)
+    return weighted_graph

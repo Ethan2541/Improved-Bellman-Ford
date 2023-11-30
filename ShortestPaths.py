@@ -27,8 +27,13 @@ class ShortestPaths:
                         self.distances[v] = self.distances[predecessor] + self.graph[predecessor][v]['weight']
                         self.predecessors[v] = predecessor
                         self.hasConverged = False
+            # Negative cycle detection
+            for u, v in self.graph.edges:
+                if self.distances[u] + self.graph[u][v]['weight'] < self.distances[v]:   
+                    self.hasConverged = False
+                    raise ValueError('The input graph contains at least one negative cycle, preventing Bellman-Ford algorithm from converging.')
 
-    def create_shortest_paths_graph(self):
+    def create_graph_of_shortest_paths(self):
         edges = [(self.predecessors[v], v) for v in range(len(self.predecessors)) if v != self.source]
         shortest_paths_graph = nx.DiGraph(edges)
         return shortest_paths_graph
