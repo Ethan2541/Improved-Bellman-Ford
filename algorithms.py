@@ -72,7 +72,7 @@ def find_node_with_maximal_gap_out_in_degrees(graph: nx.DiGraph):
 
 
 
-def generate_random_test_sets(n_instances, n_nodes, weight_min, weight_max):
+def generate_random_test_set(n_instances, n_nodes, weight_min, weight_max):
     G = create_random_graph(n_nodes)
     weighted_graphs = [create_weighted_graph_from_template(G, weight_min, weight_max) for _ in range(n_instances)]
     return G, weighted_graphs
@@ -92,7 +92,7 @@ def create_random_graph(n_nodes):
 
 def create_weighted_graph_from_template(template_graph, weight_min, weight_max):
     new_edges = []
-    for (u,v), w in zip(template_graph.edges, np.random.uniform(weight_min, weight_max, len(template_graph.edges))):
+    for (u,v), w in zip(template_graph.edges, np.random.randint(weight_min, weight_max+1, len(template_graph.edges))):
         new_edges.append((u, v, {'weight': w}))
     weighted_graph = nx.DiGraph(new_edges)
     return weighted_graph
