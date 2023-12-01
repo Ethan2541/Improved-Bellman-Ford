@@ -1,4 +1,4 @@
-from ShortestPaths import ShortestPaths
+from src.ShortestPaths import ShortestPaths
 import networkx as nx
 import numpy as np
 
@@ -30,15 +30,15 @@ class Graph(nx.DiGraph):
         source = np.argmax(n_neighbours_for_each_node)
         return source
     
-    def compute_shortest_paths(self, source:int):
+    def compute_shortest_paths(self, source:int, ordered_nodes=None):
         shortest_paths = ShortestPaths(self, source)
-        shortest_paths.bellman_ford()
+        shortest_paths.bellman_ford(ordered_nodes)
         shortest_paths_graph = self.create_graph_from_shortest_paths(shortest_paths)
         n_iterations = shortest_paths.n_iterations
         return shortest_paths_graph, n_iterations
     
     def create_graph_from_shortest_paths(self, shortest_paths):
-        edges = [(shortest_paths.predecessors[v], v) for v in range(len(shortest_paths.predecessors)) if shortest_paths.predecessors[v] != None]
+        edges = [(shortest_paths.predecessors[v], v) for v in self.nodes if shortest_paths.predecessors[v] != None]
         shortest_paths_graph = Graph(self.nodes, edges)
         return shortest_paths_graph
     

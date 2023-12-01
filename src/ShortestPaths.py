@@ -13,10 +13,10 @@ class ShortestPaths:
         self.distances[self.source] = 0
         self.predecessors = {node: None for node in self.graph.nodes}
 
-    def bellman_ford(self, ordered_nodes=None):
+    def bellman_ford(self, ordered_nodes):
         n_nodes = len(self.graph.nodes)
         if ordered_nodes is None:
-            ordered_nodes = self.graph.nodes
+            ordered_nodes = np.random.choice(self.graph.nodes, n_nodes, replace=False)
         while (self.n_iterations < n_nodes - 1) and (not self.has_converged):
             self.n_iterations += 1
             self.has_converged = True
