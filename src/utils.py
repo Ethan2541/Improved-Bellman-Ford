@@ -6,11 +6,33 @@ def generate_random_test_set(n_instances, n_nodes, weight_min, weight_max, p_edg
     weighted_graphs = [create_weighted_graph_from_template(G, weight_min, weight_max) for _ in range(n_instances)]
     return G, weighted_graphs
 
+def generate_levelled_test_set(n_instances, n_levels, n_nodes_per_level, weight_min, weight_max):
+    G = create_levelled_graph(n_levels, n_nodes_per_level)
+    weighted_graphs = [create_weighted_graph_from_template(G, weight_min, weight_max) for _ in range(n_instances)]
+    return G, weighted_graphs
+
+
 def create_random_graph(n_nodes, p_edge, mode):
     if mode is None:
         return create_random_standard_graph(n_nodes, p_edge)
     elif mode == 'acyclic':
         return create_random_acyclic_graph(n_nodes, p_edge)
+    
+def create_levelled_graph(n_levels, n_nodes_per_level):
+    n_levels = 2500
+    n_nodes_per_level = 4
+    n_nodes = n_nodes_per_level * n_levels
+    nodes = range(n_nodes)
+    levels = []
+    for j in range(n_levels):
+        levels.append(nodes[4*j:4*(j+1)])
+    edges = []
+    for i in range(len(levels)-1):
+        for u in levels[i]:
+            for v in levels[i+1]:
+                edges.append((u,v))
+    created_graph = Graph(nodes, edges)
+    return created_graph
     
 def create_weighted_graph_from_template(template_graph, weight_min, weight_max):
     new_edges = []
@@ -41,13 +63,6 @@ def create_random_acyclic_graph(n_nodes, p_edge):
     created_graph = Graph(nodes, edges)
     return created_graph
 
-def choose_neighbours(possible_neighbours, p_edge):
-    neighbours = []
-    for v in possible_neighbours:
-        p = np.random.rand()
-        if p < p_edge:
-            neighbours.append(v)
-    return neighbours
 
 def rank_nodes(nodes):
     ranks = []
@@ -58,3 +73,12 @@ def rank_nodes(nodes):
         ranks.append(rank_nodes)
         choosable_nodes -= set(rank_nodes)
     return ranks
+
+
+def choose_neighbours(possible_neighbours, p_edge):
+    neighbours = []
+    for v in possible_neighbours:
+        p = np.random.rand()
+        if p < p_edge:
+            neighbours.append(v)
+    return neighbours
