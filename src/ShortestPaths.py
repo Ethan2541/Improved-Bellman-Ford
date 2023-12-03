@@ -17,7 +17,7 @@ class ShortestPaths:
         n_nodes = len(self.graph.nodes)
         if ordered_nodes is None:
             ordered_nodes = np.random.choice(self.graph.nodes, n_nodes, replace=False)
-        while (self.n_iterations < n_nodes - 1) and (not self.has_converged):
+        while (self.n_iterations < n_nodes) and (not self.has_converged):
             self.n_iterations += 1
             self.has_converged = True
             for v in ordered_nodes:
@@ -26,8 +26,7 @@ class ShortestPaths:
                         self.distances[v] = self.distances[predecessor] + self.graph[predecessor][v]['weight']
                         self.predecessors[v] = predecessor
                         self.has_converged = False
-        # Negative cycle detection
-        for u, v in self.graph.edges:
-            if self.distances[u] + self.graph[u][v]['weight'] < self.distances[v]:   
-                self.has_converged = False
+            # Negative cycle detection
+            if (self.n_iterations == n_nodes) and (not self.has_converged):
                 raise ValueError('The input graph contains at least one negative cycle, preventing Bellman-Ford algorithm from converging.')
+        self.n_iterations -= 1
