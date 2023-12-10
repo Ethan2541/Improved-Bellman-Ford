@@ -19,13 +19,11 @@ def create_random_graph(n_nodes, p_edge, mode):
         return create_random_acyclic_graph(n_nodes, p_edge)
     
 def create_levelled_graph(n_levels, n_nodes_per_level):
-    n_levels = 2500
-    n_nodes_per_level = 4
     n_nodes = n_nodes_per_level * n_levels
     nodes = range(n_nodes)
     levels = []
     for j in range(n_levels):
-        levels.append(nodes[4*j:4*(j+1)])
+        levels.append(nodes[n_nodes_per_level*j:n_nodes_per_level*(j+1)])
     edges = []
     for i in range(len(levels)-1):
         for u in levels[i]:
